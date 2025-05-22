@@ -2,7 +2,7 @@ package com.asusoftware.TermoPro.invitation.service;
 
 import com.asusoftware.TermoPro.company.model.dto.CompanyDto;
 import com.asusoftware.TermoPro.company.service.CompanyService;
-import com.asusoftware.TermoPro.config.InvalidTokenException;
+import com.asusoftware.TermoPro.exception.InvalidTokenException;
 import com.asusoftware.TermoPro.invitation.model.Invitation;
 import com.asusoftware.TermoPro.invitation.model.dto.CreateInvitationDto;
 import com.asusoftware.TermoPro.invitation.model.dto.InvitationDto;
