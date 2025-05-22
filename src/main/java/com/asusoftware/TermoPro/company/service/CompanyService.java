@@ -36,6 +36,8 @@ public class CompanyService {
      */
     @Transactional
     public CompanyDto createCompany(CreateCompanyDto dto) {
+        User user = userRepository.findById(dto.getOwnerId())
+                .orElseThrow(() -> new ResourceNotFoundException("Utilizatorul nu a fost găsit."));
         if (companyRepository.existsByNameIgnoreCase(dto.getName())) {
             throw new CompanyAlreadyExistsException("Există deja o companie cu acest nume.");
         }
@@ -46,6 +48,8 @@ public class CompanyService {
                 .build();
 
         companyRepository.save(company);
+        user.setCompanyId(company.getId());
+        userRepository.save(user);
         return mapper.map(company, CompanyDto.class);
     }
 
