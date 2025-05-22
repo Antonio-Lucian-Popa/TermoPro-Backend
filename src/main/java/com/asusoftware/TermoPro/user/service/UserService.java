@@ -1,7 +1,9 @@
 package com.asusoftware.TermoPro.user.service;
 
 import com.asusoftware.TermoPro.config.KeycloakService;
+import com.asusoftware.TermoPro.exception.InvalidTokenException;
 import com.asusoftware.TermoPro.exception.UserAlreadyExistsException;
+import com.asusoftware.TermoPro.exception.UserNotFoundException;
 import com.asusoftware.TermoPro.invitation.model.Invitation;
 import com.asusoftware.TermoPro.invitation.repository.InvitationRepository;
 import com.asusoftware.TermoPro.user.model.User;
@@ -89,6 +91,14 @@ public class UserService {
         invitationRepository.save(invitation);
 
         return mapper.map(user, UserDto.class);
+    }
+
+    /**
+     * Returnează userul autenticat după keycloakId.
+     */
+    public User getByKeycloakId(UUID keycloakId) {
+        return userRepository.findByKeycloakId(keycloakId)
+                .orElseThrow(() -> new UserNotFoundException("User cu keycloakId " + keycloakId + " nu a fost găsit"));
     }
 }
 
