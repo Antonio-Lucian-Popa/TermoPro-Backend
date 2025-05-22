@@ -6,8 +6,10 @@ import com.asusoftware.TermoPro.customer_order.model.dto.CreateCustomerOrderDto;
 import com.asusoftware.TermoPro.customer_order.model.dto.CustomerOrderDto;
 import com.asusoftware.TermoPro.customer_order.repository.CustomerOrderRepository;
 import com.asusoftware.TermoPro.exception.ResourceNotFoundException;
+import com.asusoftware.TermoPro.user.model.User;
 import com.asusoftware.TermoPro.user.model.UserRole;
 import com.asusoftware.TermoPro.user.repository.UserRepository;
+import com.asusoftware.TermoPro.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
@@ -32,10 +34,13 @@ public class CustomerOrderService {
 
     private final CustomerOrderRepository orderRepository;
     private final UserRepository userRepository;
+    private final UserService userService;
     private final ModelMapper mapper;
 
     @Transactional
-    public CustomerOrderDto createOrder(CreateCustomerOrderDto dto) {
+    public CustomerOrderDto createOrder(CreateCustomerOrderDto dto, UUID keycloakId) {
+        User userOfTheAction = userService.getByKeycloakId(keycloakId);
+        validateUserInCompany(userOfTheAction.getId(), dto.getCompanyId());
         CustomerOrder order = CustomerOrder.builder()
                 .clientName(dto.getClientName())
                 .clientPhone(dto.getClientPhone())
@@ -110,10 +115,14 @@ public class CustomerOrderService {
     }
 
     @Transactional
-    public void deleteOrder(UUID orderId) {
-        if (!orderRepository.existsById(orderId)) {
-            throw new ResourceNotFoundException("Comanda nu există.");
-        }
+    public void deleteOrder(UUID orderId, UUID keycloakId) {
+        CustomerOrder order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new ResourceNotFoundException("Comanda nu există."));
+
+        User userOfTheAction = userService.getByKeycloakId(keycloakId);
+        validateUserInCompany(userOfTheAction.getId(), order.getCompanyId());
+        validateUserCanManageOrders(userOfTheAction.getId());
+
         orderRepository.deleteById(orderId);
     }
 
