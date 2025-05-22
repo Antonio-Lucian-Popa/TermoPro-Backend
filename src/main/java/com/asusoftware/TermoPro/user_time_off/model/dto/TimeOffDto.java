@@ -11,7 +11,8 @@ import java.util.UUID;
 public class TimeOffDto {
     private UUID id;
     private UUID userId;
-    private LocalDate date;
+    private LocalDate startDate;
+    private LocalDate endDate;
     private TimeOffType type;
     private LocalTime startTime;
     private LocalTime endTime;

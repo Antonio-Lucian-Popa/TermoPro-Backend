@@ -88,7 +88,8 @@ CREATE TABLE task_update_photo (
 CREATE TABLE user_time_off (
     id UUID PRIMARY KEY,
     user_id UUID REFERENCES users(id),
-    date DATE NOT NULL,
+    start_date DATE NOT NULL,
+    end_date DATE NOT NULL,
     type VARCHAR(50),           -- CONCEDIU, INVOIRE
     start_time TIME,            -- pentru invoiri parțiale
     end_time TIME,

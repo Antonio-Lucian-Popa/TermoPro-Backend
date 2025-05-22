@@ -22,7 +22,8 @@ public class UserTimeOff {
     private UUID id;
 
     private UUID userId;
-    private LocalDate date;
+    private LocalDate startDate;
+    private LocalDate endDate;
 
     @Enumerated(value = EnumType.STRING)
     private TimeOffType type; // CONCEDIU, INVOIRE

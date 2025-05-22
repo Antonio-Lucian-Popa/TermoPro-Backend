@@ -42,8 +42,12 @@ public class UserTimeOffService {
             throw new ResourceNotFoundException("Utilizatorul nu există.");
         }
 
-        if (dto.getDate().isBefore(LocalDate.now())) {
+        if (dto.getStartDate().isBefore(LocalDate.now())) {
             throw new IllegalArgumentException("Nu poți solicita timp liber în trecut.");
+        }
+
+        if (dto.getEndDate().isBefore(dto.getStartDate())) {
+            throw new IllegalArgumentException("Data de sfârșit nu poate fi înainte de data de început.");
         }
 
         if (dto.getType() == TimeOffType.INVOIRE &&
@@ -53,7 +57,8 @@ public class UserTimeOffService {
 
         UserTimeOff timeOff = UserTimeOff.builder()
                 .userId(dto.getUserId())
-                .date(dto.getDate())
+                .startDate(dto.getStartDate())
+                .endDate(dto.getEndDate())
                 .type(dto.getType())
                 .startTime(dto.getStartTime())
                 .endTime(dto.getEndTime())
@@ -64,22 +69,22 @@ public class UserTimeOffService {
         return mapper.map(timeOff, TimeOffDto.class);
     }
 
-
     public List<TimeOffDto> getTimeOffsForUser(UUID userId) {
         return repository.findAllByUserId(userId).stream()
                 .map(r -> mapper.map(r, TimeOffDto.class))
-                .collect(Collectors.toList());
+                .toList();
     }
 
     public List<TimeOffDto> getAllTimeOffsByDate(LocalDate date) {
-        return repository.findAllByDate(date).stream()
+        return repository.findAllByStartDateLessThanEqualAndEndDateGreaterThanEqual(date, date).stream()
                 .map(r -> mapper.map(r, TimeOffDto.class))
-                .collect(Collectors.toList());
+                .toList();
     }
 
     public List<TimeOffDto> getPendingRequestsForCompany(UUID companyId) {
-        List<UserTimeOff> list = repository.findAllPendingByCompany(companyId);
-        return list.stream().map(r -> mapper.map(r, TimeOffDto.class)).toList();
+        return repository.findAllPendingByCompany(companyId).stream()
+                .map(r -> mapper.map(r, TimeOffDto.class))
+                .toList();
     }
 
     @Transactional
@@ -105,20 +110,22 @@ public class UserTimeOffService {
             Sheet sheet = workbook.createSheet("Cereri Time Off");
 
             Row header = sheet.createRow(0);
-            header.createCell(0).setCellValue("Dată");
-            header.createCell(1).setCellValue("Tip");
-            header.createCell(2).setCellValue("Start");
-            header.createCell(3).setCellValue("End");
-            header.createCell(4).setCellValue("Aprobat");
+            header.createCell(0).setCellValue("Start");
+            header.createCell(1).setCellValue("Sfârșit");
+            header.createCell(2).setCellValue("Tip");
+            header.createCell(3).setCellValue("Start Ora");
+            header.createCell(4).setCellValue("End Ora");
+            header.createCell(5).setCellValue("Aprobat");
 
             int rowIdx = 1;
             for (UserTimeOff off : list) {
                 Row row = sheet.createRow(rowIdx++);
-                row.createCell(0).setCellValue(off.getDate().toString());
-                row.createCell(1).setCellValue(off.getType().name());
-                row.createCell(2).setCellValue(off.getStartTime() != null ? off.getStartTime().toString() : "-");
-                row.createCell(3).setCellValue(off.getEndTime() != null ? off.getEndTime().toString() : "-");
-                row.createCell(4).setCellValue(Boolean.TRUE.equals(off.getApproved()) ? "DA" : "NU");
+                row.createCell(0).setCellValue(off.getStartDate().toString());
+                row.createCell(1).setCellValue(off.getEndDate().toString());
+                row.createCell(2).setCellValue(off.getType().name());
+                row.createCell(3).setCellValue(off.getStartTime() != null ? off.getStartTime().toString() : "-");
+                row.createCell(4).setCellValue(off.getEndTime() != null ? off.getEndTime().toString() : "-");
+                row.createCell(5).setCellValue(Boolean.TRUE.equals(off.getApproved()) ? "DA" : "NU");
             }
 
             ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -128,7 +135,6 @@ public class UserTimeOffService {
             throw new RuntimeException("Eroare la generarea fișierului Excel", e);
         }
     }
-
 
     public byte[] exportTimeOffsToPdf(UUID userId) {
         List<UserTimeOff> requests = repository.findAllByUserId(userId);
@@ -162,10 +168,11 @@ public class UserTimeOffService {
                 content.beginText();
                 content.newLineAtOffset(margin, y);
                 content.showText(
-                        "- " + off.getDate() + " | " + off.getType() +
-                                (off.getStartTime() != null ? " " + off.getStartTime() : "") +
-                                (off.getEndTime() != null ? " - " + off.getEndTime() : "") +
-                                " | Aprobat: " + (Boolean.TRUE.equals(off.getApproved()) ? "DA" : "NU")
+                        "- " + off.getStartDate() + " → " + off.getEndDate()
+                                + " | " + off.getType()
+                                + (off.getStartTime() != null ? " " + off.getStartTime() : "")
+                                + (off.getEndTime() != null ? " - " + off.getEndTime() : "")
+                                + " | Aprobat: " + (Boolean.TRUE.equals(off.getApproved()) ? "DA" : "NU")
                 );
                 content.endText();
                 y -= leading;
@@ -180,5 +187,4 @@ public class UserTimeOffService {
             throw new RuntimeException("Eroare la generarea PDF-ului", e);
         }
     }
-
 }

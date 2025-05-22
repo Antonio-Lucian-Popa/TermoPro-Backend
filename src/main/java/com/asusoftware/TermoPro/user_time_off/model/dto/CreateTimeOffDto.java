@@ -10,7 +10,8 @@ import java.util.UUID;
 @Data
 public class CreateTimeOffDto {
     private UUID userId;
-    private LocalDate date;
+    private LocalDate startDate;
+    private LocalDate endDate;
     private TimeOffType type;
     private LocalTime startTime;
     private LocalTime endTime;

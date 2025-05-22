@@ -13,7 +13,14 @@ import java.util.UUID;
 @Repository
 public interface UserTimeOffRepository extends JpaRepository<UserTimeOff, UUID> {
     List<UserTimeOff> findAllByUserId(UUID userId);
-    List<UserTimeOff> findAllByDate(LocalDate date);
+
+    List<UserTimeOff> findAllByStartDateLessThanEqualAndEndDateGreaterThanEqual(LocalDate end, LocalDate start);
+
+    // Adică: unde intervalul cererii se suprapune cu data `date`
+    default List<UserTimeOff> findAllByDate(LocalDate date) {
+        return findAllByStartDateLessThanEqualAndEndDateGreaterThanEqual(date, date);
+    }
+
     @Query("""
     SELECT t FROM UserTimeOff t
     JOIN User u ON t.userId = u.id
