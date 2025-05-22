@@ -3,6 +3,7 @@ package com.asusoftware.TermoPro.mail.service;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.AllArgsConstructor;
+import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
@@ -28,6 +29,14 @@ public class MailService {
         } catch (MessagingException e) {
             throw new RuntimeException("Failed to send email", e);
         }
+    }
+
+    public void sendEmail(String to, String subject, String body) {
+        var message = new SimpleMailMessage();
+        message.setTo(to);
+        message.setSubject(subject);
+        message.setText(body);
+        mailSender.send(message);
     }
 
     private String buildInvitationHtml(String link, String companyName, String role) {

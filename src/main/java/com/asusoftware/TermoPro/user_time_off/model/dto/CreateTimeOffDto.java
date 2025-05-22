@@ -15,4 +15,5 @@ public class CreateTimeOffDto {
     private TimeOffType type;
     private LocalTime startTime;
     private LocalTime endTime;
+    private UUID companyId;
 }

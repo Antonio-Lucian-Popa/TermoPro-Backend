@@ -1,7 +1,11 @@
 package com.asusoftware.TermoPro.user_time_off.service;
 
 import com.asusoftware.TermoPro.exception.ResourceNotFoundException;
+import com.asusoftware.TermoPro.mail.service.MailService;
+import com.asusoftware.TermoPro.user.model.User;
+import com.asusoftware.TermoPro.user.model.UserRole;
 import com.asusoftware.TermoPro.user.repository.UserRepository;
+import com.asusoftware.TermoPro.user.service.UserService;
 import com.asusoftware.TermoPro.user_time_off.repository.UserTimeOffRepository;
 import com.asusoftware.TermoPro.user_time_off.model.TimeOffType;
 import com.asusoftware.TermoPro.user_time_off.model.UserTimeOff;
@@ -34,6 +38,8 @@ public class UserTimeOffService {
 
     private final UserTimeOffRepository repository;
     private final UserRepository userRepository;
+    private final UserService userService;
+    private final MailService emailService;
     private final ModelMapper mapper;
 
     @Transactional
@@ -66,6 +72,19 @@ public class UserTimeOffService {
                 .build();
 
         repository.save(timeOff);
+        User requester = userService.getByKeycloakId(dto.getUserId());
+        List<User> managers = userRepository.findAllByCompanyIdAndRole(dto.getCompanyId(), UserRole.OWNER);
+        if (managers.isEmpty()) {
+            throw new ResourceNotFoundException("Nu există manageri pentru compania specificată.");
+        }
+        // Trimite email managerilor
+        for (User manager : managers) {
+            emailService.sendEmail(manager.getEmail(),
+                    "Cerere nouă de timp liber",
+                    "Utilizatorul " + requester.getFirstName() + " " + requester.getLastName() +
+                            " a solicitat timp liber în perioada " + dto.getStartDate() + " - " + dto.getEndDate());
+        }
+
         return mapper.map(timeOff, TimeOffDto.class);
     }
 
