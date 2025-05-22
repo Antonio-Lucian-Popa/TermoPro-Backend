@@ -34,6 +34,7 @@ public class Task {
     private String taskType;
     private String status;
     private LocalDate scheduledDate;
+    private UUID companyId;
 
     @Column(nullable = false)
     private UUID assignedBy;

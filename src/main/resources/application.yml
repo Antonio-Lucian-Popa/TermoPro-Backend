@@ -2,7 +2,7 @@ server:
   port: 8080
 spring:
   datasource:
-    url: jdbc:postgresql://antonio-dev.go.ro:15772/termoprodb
+    url: jdbc:postgresql://antonio-dev.go.ro:15773/termoProDb
     username: postgres
     password: password
     driver-class-name: org.postgresql.Driver
