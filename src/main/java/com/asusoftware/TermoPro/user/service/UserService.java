@@ -8,9 +8,11 @@ import com.asusoftware.TermoPro.invitation.model.Invitation;
 import com.asusoftware.TermoPro.invitation.repository.InvitationRepository;
 import com.asusoftware.TermoPro.user.model.User;
 import com.asusoftware.TermoPro.user.model.dto.CreateUserDto;
+import com.asusoftware.TermoPro.user.model.dto.LoginDto;
 import com.asusoftware.TermoPro.user.model.dto.UserDto;
 import com.asusoftware.TermoPro.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.keycloak.representations.AccessTokenResponse;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -99,6 +101,22 @@ public class UserService {
     public User getByKeycloakId(UUID keycloakId) {
         return userRepository.findByKeycloakId(keycloakId)
                 .orElseThrow(() -> new UserNotFoundException("User cu keycloakId " + keycloakId + " nu a fost găsit"));
+    }
+
+    /**
+     * Login utilizator prin Keycloak.
+     */
+    public AccessTokenResponse login(LoginDto dto) {
+        return keycloakService.loginUser(dto);
+    }
+
+    /**
+     * Ștergere cont după keycloakId (soft delete sau hard).
+     */
+    @Transactional
+    public void deleteByKeycloakId(UUID keycloakId) {
+        userRepository.findByKeycloakId(keycloakId)
+                .ifPresent(userRepository::delete);
     }
 }
 
