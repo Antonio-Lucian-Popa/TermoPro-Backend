@@ -25,4 +25,8 @@ public interface TaskRepository extends JpaRepository<Task, UUID> {
     Optional<Task> findByIdAndCompanyId(UUID id, UUID companyId);
 
     boolean existsByIdAndCompanyId(UUID taskId, UUID companyId);
+
+    List<Task> findAllByTeamIdAndScheduledDate(UUID teamId, LocalDate scheduledDate);
+    List<Task> findAllByUserIdAndScheduledDate(UUID userId, LocalDate scheduledDate);
+
 }
