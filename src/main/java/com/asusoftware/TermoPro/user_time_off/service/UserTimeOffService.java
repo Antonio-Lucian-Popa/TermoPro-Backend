@@ -109,13 +109,25 @@ public class UserTimeOffService {
     @Transactional
     public void approveRequest(UUID requestId, UUID keycloakId) {
         User requester = userService.getByKeycloakId(keycloakId);
-        UserTimeOff request = repository.findById(requester.getId())
+        UserTimeOff request = repository.findById(requestId)
                 .orElseThrow(() -> new ResourceNotFoundException("Cererea nu există."));
 
         validateOwnerPermission(request.getUserId(), requester.getId());
 
         request.setApproved(true);
         repository.save(request);
+
+        User receiver = userRepository.findById(request.getUserId())
+                .orElseThrow(() -> new ResourceNotFoundException("Utilizatorul vizat nu există."));
+
+        String message = String.format(
+                "Salut %s,\n\nCererea ta de timp liber din %s până în %s a fost APROBATĂ.",
+                receiver.getFirstName(),
+                request.getStartDate(),
+                request.getEndDate()
+        );
+
+        emailService.sendEmail(receiver.getEmail(), "Cerere aprobată", message);
     }
 
     @Transactional
@@ -126,9 +138,20 @@ public class UserTimeOffService {
 
         validateOwnerPermission(request.getUserId(), requester.getId());
 
-        repository.delete(request);
-    }
+        User receiver = userRepository.findById(request.getUserId())
+                .orElseThrow(() -> new ResourceNotFoundException("Utilizatorul vizat nu există."));
 
+        String message = String.format(
+                "Salut %s,\n\nCererea ta de timp liber din %s până în %s a fost RESPINSĂ.",
+                receiver.getFirstName(),
+                request.getStartDate(),
+                request.getEndDate()
+        );
+
+        repository.delete(request);
+
+        emailService.sendEmail(receiver.getEmail(), "Cerere respinsă", message);
+    }
 
     public byte[] exportTimeOffsToExcel(UUID userId) {
         List<UserTimeOff> list = repository.findAllByUserId(userId);
