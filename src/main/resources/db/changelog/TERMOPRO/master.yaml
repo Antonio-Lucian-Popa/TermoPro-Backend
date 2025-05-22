@@ -1,0 +1,4 @@
+databaseChangeLog:
+  - include:
+      file: TERMOPRO/master.yaml
+      relativeToChangelogFile: true

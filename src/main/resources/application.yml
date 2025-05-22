@@ -1,0 +1,58 @@
+server:
+  port: 8080
+spring:
+  datasource:
+    url: jdbc:postgresql://antonio-dev.go.ro:15772/termoprodb
+    username: postgres
+    password: password
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+    database: postgresql
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+  liquibase:
+    enabled: true
+    drop-first: false # Drops and creates scheme from scratch on every start
+    change-log: classpath:db/changelog/db.changelog-master.yaml
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://antonio-dev.go.ro:8081/keycloak-app/realms/termopro-realm
+
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: termo.pro.app@gmail.com
+    password: pvdersnsbpiqzzip
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
+keycloak:
+  realm: termopro-realm
+  resource: termopro-backend
+  # auth-server-url: http://antonio-dev.go.ro:8081/keycloack-app/realms/gym-management-realm/protocol/openid-connect/auth
+  auth-server-url: http://antonio-dev.go.ro:8081/keycloak-app/
+  credentials:
+    secret: 8pCQHAvnCxTsS2f3gUZe55fe8ywsADao
+  admin:
+    username: admin
+    password: admin
+
+cors:
+  allowed-origins: "http://localhost:3000,http://localhost:5173/,http://antonio-dev.go.ro:8081"
+  allowed-methods: "GET,POST,PUT,DELETE,OPTIONS"
+  allowed-headers: "*"
+
+upload:
+  dir: uploads/
+
+external-link:
+  url: "http://localhost:8080/images/"
+  #url: "http://antonio-dev.go.ro:8081/dentatrack-api/images/"
