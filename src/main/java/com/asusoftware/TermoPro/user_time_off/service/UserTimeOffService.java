@@ -107,19 +107,28 @@ public class UserTimeOffService {
     }
 
     @Transactional
-    public void approveRequest(UUID requestId) {
-        UserTimeOff request = repository.findById(requestId)
+    public void approveRequest(UUID requestId, UUID keycloakId) {
+        User requester = userService.getByKeycloakId(keycloakId);
+        UserTimeOff request = repository.findById(requester.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Cererea nu există."));
+
+        validateOwnerPermission(request.getUserId(), requester.getId());
+
         request.setApproved(true);
         repository.save(request);
     }
 
     @Transactional
-    public void rejectRequest(UUID requestId) {
+    public void rejectRequest(UUID requestId, UUID keycloakId) {
+        User requester = userService.getByKeycloakId(keycloakId);
         UserTimeOff request = repository.findById(requestId)
                 .orElseThrow(() -> new ResourceNotFoundException("Cererea nu există."));
+
+        validateOwnerPermission(request.getUserId(), requester.getId());
+
         repository.delete(request);
     }
+
 
     public byte[] exportTimeOffsToExcel(UUID userId) {
         List<UserTimeOff> list = repository.findAllByUserId(userId);
@@ -206,4 +215,21 @@ public class UserTimeOffService {
             throw new RuntimeException("Eroare la generarea PDF-ului", e);
         }
     }
+
+    private void validateOwnerPermission(UUID targetUserId, UUID requesterId) {
+        User requester = userRepository.findById(requesterId)
+                .orElseThrow(() -> new ResourceNotFoundException("Userul care face cererea nu există."));
+
+        User targetUser = userRepository.findById(targetUserId)
+                .orElseThrow(() -> new ResourceNotFoundException("Userul din cerere nu există."));
+
+        if (!requester.getCompanyId().equals(targetUser.getCompanyId())) {
+            throw new SecurityException("Nu ai voie să modifici cereri din altă companie.");
+        }
+
+        if (!requester.getRole().equals(UserRole.OWNER)) {
+            throw new SecurityException("Doar OWNER-ul companiei poate aproba sau respinge cereri.");
+        }
+    }
+
 }

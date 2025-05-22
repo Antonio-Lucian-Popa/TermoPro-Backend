@@ -6,6 +6,8 @@ import com.asusoftware.TermoPro.user_time_off.service.UserTimeOffService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -62,14 +64,16 @@ public class UserTimeOffController {
 
 
     @PutMapping("/{requestId}/approve")
-    public ResponseEntity<Void> approve(@PathVariable UUID requestId) {
-        service.approveRequest(requestId);
+    public ResponseEntity<Void> approve(@PathVariable UUID requestId, @AuthenticationPrincipal Jwt principal) {
+        UUID keycloakId = UUID.fromString(principal.getSubject());
+        service.approveRequest(requestId, keycloakId);
         return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/{requestId}/reject")
-    public ResponseEntity<Void> reject(@PathVariable UUID requestId) {
-        service.rejectRequest(requestId);
+    public ResponseEntity<Void> reject(@PathVariable UUID requestId, @AuthenticationPrincipal Jwt principal) {
+        UUID keycloakId = UUID.fromString(principal.getSubject());
+        service.rejectRequest(requestId, keycloakId);
         return ResponseEntity.noContent().build();
     }
 }
