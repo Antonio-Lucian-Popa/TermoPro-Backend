@@ -19,5 +19,6 @@ public class CreateTaskDto {
     private String title;
     private String description;
     private String taskType;
+    private UUID companyId;
     private LocalDate scheduledDate;
 }

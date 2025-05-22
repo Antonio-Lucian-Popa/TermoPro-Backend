@@ -66,6 +66,7 @@ public class TaskService {
                 .status("NOT_STARTED")
                 .scheduledDate(dto.getScheduledDate())
                 .assignedBy(creatorUserId)
+                .companyId(dto.getCompanyId())
                 .createdAt(LocalDateTime.now())
                 .build();
 
