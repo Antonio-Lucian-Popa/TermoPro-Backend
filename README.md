@@ -54,6 +54,95 @@ Aceasta este o aplicație internă de tip SaaS pentru firmele care montează fer
  ┗ 📂uploads/images      # Fișiere salvate (imagini atașate la taskuri)
 ```
 
+## 🔐 Autentificare (Keycloak)
+
+- `POST /api/v1/auth/register` — înregistrare user
+- `POST /api/v1/auth/login` — login user
+- `POST /api/v1/auth/login-with-invite` — înregistrare user cu invitație (token)
+- `DELETE /api/v1/auth/delete/{keycloakId}` — ștergere cont
+
+---
+
+## 🏢 Companii
+
+- `POST /api/v1/company` — creează firmă nouă (OWNER only)
+- `GET /api/v1/company/{id}` — detalii companie
+- `GET /api/v1/company/{id}/users` — listare angajați
+- `DELETE /api/v1/company/{companyId}/user/{userId}` — elimină utilizator din companie
+
+---
+
+## 👥 Utilizatori
+
+- `POST /api/v1/users` — creează cont nou în firmă
+- `POST /api/v1/users/invite` — înregistrare cu invitație
+- `GET /api/v1/users/keycloak/{id}` — info user logat
+- `DELETE /api/v1/users/keycloak/{id}` — șterge user după Keycloak ID
+
+---
+
+## 📩 Invitații
+
+- `POST /api/v1/invitations` — trimite invitație user (OWNER/MANAGER)
+- `GET /api/v1/invitations/company/{companyId}` — listă invitații active
+- `DELETE /api/v1/invitations/{invitationId}` — șterge invitație
+
+---
+
+## 🧑‍🤝‍🧑 ECHIPE
+
+- `POST /api/v1/teams` — creează echipă
+- `GET /api/v1/teams/company/{companyId}` — echipele din firmă
+- `POST /api/v1/teams/{teamId}/add/{userId}` — adaugă user în echipă
+- `DELETE /api/v1/teams/{teamId}/remove/{userId}` — elimină user din echipă
+- `GET /api/v1/teams/{teamId}/members` — membri echipă
+
+---
+
+## 🔧 Taskuri
+
+- `POST /api/v1/tasks` — creează task pentru echipă sau user individual
+- `GET /api/v1/tasks/company/{companyId}` — listă taskuri firmă
+- `GET /api/v1/tasks/team/{teamId}` — taskuri echipă
+- `GET /api/v1/tasks/user/{userId}` — taskuri personale
+- `PUT /api/v1/tasks/{id}/status` — actualizează status
+- `DELETE /api/v1/tasks/{id}` — șterge task (doar cel care l-a creat)
+
+---
+
+## 🖼️ Task Updates
+
+- `POST /api/v1/task-updates` — adaugă update (comentariu + poze)
+- `GET /api/v1/task-updates/task/{taskId}` — listă updates task
+
+---
+
+## 📦 Comenzi (Customer Orders)
+
+- `POST /api/v1/orders` — creează comandă
+- `GET /api/v1/orders/company/{companyId}` — comenzi companie
+- `GET /api/v1/orders/{orderId}` — detalii comandă
+- `DELETE /api/v1/orders/{orderId}` — ștergere comandă (OWNER/MANAGER)
+- `PUT /api/v1/orders/{id}/status` — actualizează status
+- `GET /api/v1/orders/filter?companyId=...&date=...&status=...` — filtrare
+- `GET /api/v1/orders/company/{id}/export/pdf` — export PDF
+- `GET /api/v1/orders/company/{id}/export/excel` — export Excel
+
+---
+
+## 📆 Concedii & Învoiri
+
+- `POST /api/v1/time-off` — trimite cerere
+- `GET /api/v1/time-off/user/{userId}` — cererile unui user
+- `GET /api/v1/time-off/by-date?date=...` — cereri într-o zi
+- `GET /api/v1/time-off/pending/company/{companyId}` — doar pentru OWNER
+- `PUT /api/v1/time-off/{requestId}/approve?keycloakId=...` — aprobare cerere
+- `DELETE /api/v1/time-off/{requestId}/reject?keycloakId=...` — respingere cerere
+- `GET /api/v1/time-off/user/{userId}/export/pdf` — export PDF
+- `GET /api/v1/time-off/user/{userId}/export/excel` — export Excel
+
+---
+
 ## TODO viitor
 -  Dashboard cu statistici lunare
 -  PDF/raport lucrări
