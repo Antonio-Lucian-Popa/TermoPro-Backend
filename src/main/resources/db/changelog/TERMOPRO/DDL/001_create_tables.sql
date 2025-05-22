@@ -11,7 +11,6 @@ CREATE TABLE users (
     email VARCHAR(50) UNIQUE NOT NULL,
     first_name VARCHAR(50) NOT NULL,
     last_name VARCHAR(50) NOT NULL,
-    password_hash TEXT NOT NULL,
     role VARCHAR(50) NOT NULL, -- OWNER, MANAGER, TECHNICIAN, OPERATOR
     keycloak_id UUID UNIQUE NOT NULL,
     company_id UUID REFERENCES company(id),
