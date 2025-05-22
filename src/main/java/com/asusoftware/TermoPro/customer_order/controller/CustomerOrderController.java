@@ -64,9 +64,11 @@ public class CustomerOrderController {
     @PutMapping("/{orderId}/status")
     public ResponseEntity<Void> updateStatus(
             @PathVariable UUID orderId,
-            @RequestParam String status
+            @RequestParam String status,
+            @AuthenticationPrincipal Jwt principal
     ) {
-        orderService.updateStatus(orderId, OrderStatus.valueOf(status));
+        UUID keycloakId = UUID.fromString(principal.getSubject());
+        orderService.updateStatus(orderId, OrderStatus.valueOf(status), keycloakId);
         return ResponseEntity.noContent().build();
     }
 
