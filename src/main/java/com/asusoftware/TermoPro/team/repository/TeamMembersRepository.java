@@ -25,4 +25,7 @@ public interface TeamMembersRepository extends JpaRepository<TeamMember, TeamMem
 
     // Șterge toate legăturile pentru o echipă (ex: când este ștearsă echipa)
     void deleteByTeamId(UUID teamId);
+
+    void deleteAllByTeamId(UUID teamId);
+
 }

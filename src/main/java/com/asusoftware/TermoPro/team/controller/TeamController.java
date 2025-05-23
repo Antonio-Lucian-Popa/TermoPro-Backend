@@ -1,6 +1,7 @@
 package com.asusoftware.TermoPro.team.controller;
 
 import com.asusoftware.TermoPro.team.model.dto.TeamDto;
+import com.asusoftware.TermoPro.team.model.dto.UpdateTeamDto;
 import com.asusoftware.TermoPro.team.service.TeamService;
 import com.asusoftware.TermoPro.user.model.dto.UserDto;
 import lombok.RequiredArgsConstructor;
@@ -42,6 +43,31 @@ public class TeamController {
         teamService.addUserToTeam(teamId, userId, requesterId);
         return ResponseEntity.ok().build();
     }
+
+    /**
+     * Modifică numele echipei (OWNER / MANAGER doar).
+     */
+    @PutMapping("/{teamId}")
+    public ResponseEntity<TeamDto> updateTeam(
+            @PathVariable UUID teamId,
+            @RequestBody UpdateTeamDto dto
+    ) {
+        TeamDto updated = teamService.updateTeam(teamId, dto);
+        return ResponseEntity.ok(updated);
+    }
+
+    /**
+     * Șterge echipa complet (OWNER / MANAGER doar).
+     */
+    @DeleteMapping("/{teamId}")
+    public ResponseEntity<Void> deleteTeam(
+            @PathVariable UUID teamId,
+            @RequestParam UUID requesterId
+    ) {
+        teamService.deleteTeam(teamId, requesterId);
+        return ResponseEntity.noContent().build();
+    }
+
 
     /**
      * Elimină un utilizator dintr-o echipă (OWNER / MANAGER doar).

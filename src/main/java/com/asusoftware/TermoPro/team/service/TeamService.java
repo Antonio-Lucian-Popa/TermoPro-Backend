@@ -5,6 +5,7 @@ import com.asusoftware.TermoPro.team.model.Team;
 import com.asusoftware.TermoPro.team.model.TeamMember;
 import com.asusoftware.TermoPro.team.model.TeamMemberId;
 import com.asusoftware.TermoPro.team.model.dto.TeamDto;
+import com.asusoftware.TermoPro.team.model.dto.UpdateTeamDto;
 import com.asusoftware.TermoPro.team.repository.TeamMembersRepository;
 import com.asusoftware.TermoPro.team.repository.TeamRepository;
 import com.asusoftware.TermoPro.user.model.User;
@@ -119,6 +120,38 @@ public class TeamService {
         if (user.getRole() != UserRole.OWNER && user.getRole() != UserRole.MANAGER) {
             throw new SecurityException("Doar OWNER sau MANAGER pot modifica echipe.");
         }
+    }
+
+    @Transactional
+    public TeamDto updateTeam(UUID teamId, UpdateTeamDto dto) {
+        Team team = teamRepository.findById(teamId)
+                .orElseThrow(() -> new ResourceNotFoundException("Echipa nu a fost găsită."));
+
+        User requester = userRepository.findById(dto.getRequesterId())
+                .orElseThrow(() -> new ResourceNotFoundException("Utilizatorul nu a fost găsit."));
+
+        validateUserCanManageTeams(requester.getId(), team.getCompanyId());
+
+        team.setName(dto.getName());
+        teamRepository.save(team);
+
+        return mapper.map(team, TeamDto.class);
+    }
+
+    @Transactional
+    public void deleteTeam(UUID teamId, UUID requesterId) {
+        Team team = teamRepository.findById(teamId)
+                .orElseThrow(() -> new ResourceNotFoundException("Echipa nu a fost găsită."));
+
+        User requester = userRepository.findById(requesterId)
+                .orElseThrow(() -> new ResourceNotFoundException("Utilizatorul nu a fost găsit."));
+
+        validateUserCanManageTeams(requester.getId(), team.getCompanyId());
+
+        // Stergem membrii echipei mai întâi (dacă vrei să previi FK constraint error)
+        teamMembersRepository.deleteAllByTeamId(teamId);
+
+        teamRepository.delete(team);
     }
 
 }
