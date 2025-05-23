@@ -4,6 +4,7 @@ import com.asusoftware.TermoPro.exception.ResourceNotFoundException;
 import com.asusoftware.TermoPro.mail.service.MailService;
 import com.asusoftware.TermoPro.user.model.User;
 import com.asusoftware.TermoPro.user.model.UserRole;
+import com.asusoftware.TermoPro.user.model.dto.UserDto;
 import com.asusoftware.TermoPro.user.repository.UserRepository;
 import com.asusoftware.TermoPro.user.service.UserService;
 import com.asusoftware.TermoPro.user_time_off.repository.UserTimeOffRepository;
@@ -72,7 +73,7 @@ public class UserTimeOffService {
                 .build();
 
         repository.save(timeOff);
-        User requester = userService.getByKeycloakId(dto.getUserId());
+        UserDto requester = userService.getById(dto.getUserId());
         List<User> managers = userRepository.findAllByCompanyIdAndRole(dto.getCompanyId(), UserRole.OWNER);
         if (managers.isEmpty()) {
             throw new ResourceNotFoundException("Nu există manageri pentru compania specificată.");
