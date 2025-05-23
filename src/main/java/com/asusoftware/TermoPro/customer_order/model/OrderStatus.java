@@ -2,8 +2,9 @@ package com.asusoftware.TermoPro.customer_order.model;
 
 public enum OrderStatus {
     PENDING,
+    SCHEDULED,
     IN_PROGRESS,
-    DONE,
+    COMPLETED,
     CANCELLED;
 
     public static OrderStatus fromString(String status) {

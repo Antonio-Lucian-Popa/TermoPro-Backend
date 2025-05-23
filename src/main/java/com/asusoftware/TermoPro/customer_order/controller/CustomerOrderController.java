@@ -63,14 +63,14 @@ public class CustomerOrderController {
      * Actualizează statusul unei comenzi.
      */
     @PutMapping("/{orderId}/status")
-    public ResponseEntity<Void> updateStatus(
+    public ResponseEntity<CustomerOrderDto> updateStatus(
             @PathVariable UUID orderId,
             @RequestParam String status,
             @AuthenticationPrincipal Jwt principal
     ) {
         UUID keycloakId = UUID.fromString(principal.getSubject());
-        orderService.updateStatus(orderId, OrderStatus.valueOf(status), keycloakId);
-        return ResponseEntity.noContent().build();
+        CustomerOrderDto customerOrderDto = orderService.updateStatus(orderId, OrderStatus.valueOf(status), keycloakId);
+        return ResponseEntity.ok(customerOrderDto);
     }
 
     /**

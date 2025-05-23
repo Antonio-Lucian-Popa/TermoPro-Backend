@@ -107,7 +107,7 @@ public class CustomerOrderService {
 
 
     @Transactional
-    public void updateStatus(UUID orderId, OrderStatus newStatus, UUID keycloakId) {
+    public CustomerOrderDto updateStatus(UUID orderId, OrderStatus newStatus, UUID keycloakId) {
         User userOfTheAction = userService.getByKeycloakId(keycloakId);
         CustomerOrder order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new ResourceNotFoundException("Comanda nu a fost găsită."));
@@ -115,6 +115,7 @@ public class CustomerOrderService {
         validateUserCanManageOrders(userOfTheAction.getId());
         order.setStatus(newStatus);
         orderRepository.save(order);
+        return mapper.map(order, CustomerOrderDto.class);
     }
 
     @Transactional
