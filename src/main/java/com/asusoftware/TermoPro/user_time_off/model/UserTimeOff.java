@@ -30,4 +30,6 @@ public class UserTimeOff {
     private LocalTime startTime;
     private LocalTime endTime;
     private Boolean approved;
+    @Column(name = "created_at", nullable = false, updatable = false)
+    private LocalTime createdAt = LocalTime.now();
 }

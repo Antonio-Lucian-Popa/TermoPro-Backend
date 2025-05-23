@@ -17,4 +17,5 @@ public class TimeOffDto {
     private LocalTime startTime;
     private LocalTime endTime;
     private Boolean approved;
+    private LocalTime createdAt;
 }

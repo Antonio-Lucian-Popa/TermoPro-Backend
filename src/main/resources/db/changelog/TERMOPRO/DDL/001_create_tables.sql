@@ -93,6 +93,7 @@ CREATE TABLE user_time_off (
     type VARCHAR(50),           -- CONCEDIU, INVOIRE
     start_time TIME,            -- pentru invoiri parțiale
     end_time TIME,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     approved BOOLEAN DEFAULT FALSE
 );
 
