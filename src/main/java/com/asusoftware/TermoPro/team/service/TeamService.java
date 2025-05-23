@@ -45,10 +45,10 @@ public class TeamService {
     }
 
     @Transactional
-    public void addUserToTeam(UUID teamId, UUID userId, UUID keycloakId) {
+    public void addUserToTeam(UUID teamId, UUID userId, UUID requesterId) {
         Team team = teamRepository.findById(teamId)
                 .orElseThrow(() -> new ResourceNotFoundException("Echipa nu există."));
-        User requester = userRepository.findByKeycloakId(keycloakId)
+        User requester = userRepository.findById(requesterId)
                 .orElseThrow(() -> new ResourceNotFoundException("Utilizatorul nu a fost găsit."));
         validateUserCanManageTeams(requester.getId(), team.getCompanyId());
 
@@ -69,8 +69,8 @@ public class TeamService {
     }
 
     @Transactional
-    public void removeUserFromTeam(UUID teamId, UUID userId, UUID keycloakId) {
-        User requester = userRepository.findByKeycloakId(keycloakId)
+    public void removeUserFromTeam(UUID teamId, UUID userId, UUID requesterId) {
+        User requester = userRepository.findById(requesterId)
                 .orElseThrow(() -> new ResourceNotFoundException("Utilizatorul nu a fost găsit."));
         Team team = teamRepository.findById(teamId)
                 .orElseThrow(() -> new ResourceNotFoundException("Echipa nu există."));
@@ -98,6 +98,11 @@ public class TeamService {
                 .toList();
     }
 
+    public TeamDto getTeamDetails(UUID teamId) {
+        Team team = teamRepository.findById(teamId)
+                .orElseThrow(() -> new ResourceNotFoundException("Echipa nu există."));
+        return mapper.map(team, TeamDto.class);
+    }
 
     public boolean isUserInTeam(UUID teamId, UUID userId) {
         return teamMembersRepository.existsByTeamIdAndUserId(teamId, userId);

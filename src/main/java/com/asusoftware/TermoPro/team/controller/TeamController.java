@@ -87,4 +87,9 @@ public class TeamController {
     ) {
         return ResponseEntity.ok(teamService.isUserInTeam(teamId, userId));
     }
+
+    @GetMapping("/{teamId}")
+    public ResponseEntity<TeamDto> getTeamDetails(@PathVariable UUID teamId) {
+        return ResponseEntity.ok(teamService.getTeamDetails(teamId));
+    }
 }
