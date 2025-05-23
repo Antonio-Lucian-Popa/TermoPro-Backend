@@ -21,6 +21,7 @@ CREATE TABLE users (
 CREATE TABLE team (
     id UUID PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     company_id UUID REFERENCES company(id)
 );
 

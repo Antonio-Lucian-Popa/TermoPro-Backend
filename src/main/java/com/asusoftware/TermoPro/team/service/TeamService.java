@@ -31,13 +31,14 @@ public class TeamService {
     private final ModelMapper mapper;
 
     @Transactional
-    public TeamDto createTeam(String name, UUID companyId, UUID keycloakId) {
-        User requester = userRepository.findByKeycloakId(keycloakId)
+    public TeamDto createTeam(String name, UUID companyId, UUID userId) {
+        User requester = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("Utilizatorul nu a fost găsit."));
         validateUserCanManageTeams(requester.getId(), companyId);
         Team team = Team.builder()
                 .name(name)
                 .companyId(companyId)
+                .createdAt(LocalDateTime.now())
                 .build();
         teamRepository.save(team);
         return mapper.map(team, TeamDto.class);
