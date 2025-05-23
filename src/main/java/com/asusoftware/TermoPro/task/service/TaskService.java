@@ -1,9 +1,13 @@
 package com.asusoftware.TermoPro.task.service;
 
+import com.asusoftware.TermoPro.customer_order.model.CustomerOrder;
+import com.asusoftware.TermoPro.customer_order.model.OrderStatus;
+import com.asusoftware.TermoPro.customer_order.repository.CustomerOrderRepository;
 import com.asusoftware.TermoPro.exception.ResourceNotFoundException;
 import com.asusoftware.TermoPro.task.model.Task;
 import com.asusoftware.TermoPro.task.model.TaskUpdate;
 import com.asusoftware.TermoPro.task.model.dto.CreateTaskDto;
+import com.asusoftware.TermoPro.task.model.dto.DashboardStatsDto;
 import com.asusoftware.TermoPro.task.model.dto.TaskDto;
 import com.asusoftware.TermoPro.task.repository.TaskRepository;
 import com.asusoftware.TermoPro.task.repository.TaskUpdatePhotoRepository;
@@ -32,6 +36,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -44,6 +50,7 @@ public class TaskService {
     private final TaskUpdateRepository taskUpdateRepository;
     private final TaskUpdatePhotoRepository taskUpdatePhotoRepository;
     private final UserRepository userRepository;
+    private final CustomerOrderRepository orderRepository;
     private final ModelMapper mapper;
 
     @Transactional
@@ -116,6 +123,42 @@ public class TaskService {
                 .map(task -> mapper.map(task, TaskDto.class))
                 .collect(Collectors.toList());
     }
+
+    public DashboardStatsDto getDashboardStats(UUID companyId) {
+        List<Task> allTasks = taskRepository.findAllByCompanyId(companyId);
+        List<CustomerOrder> allOrders = orderRepository.findAllByCompanyId(companyId);
+        LocalDate today = LocalDate.now();
+
+        DashboardStatsDto dto = new DashboardStatsDto();
+        dto.setTotalTasks(allTasks.size());
+        dto.setPendingTasks((int) allTasks.stream().filter(t -> t.getStatus().equals("PENDING")).count());
+        dto.setCompletedTasks((int) allTasks.stream().filter(t -> t.getStatus().equals("COMPLETED")).count());
+
+        dto.setRecentTasks(
+                allTasks.stream()
+                        .sorted(Comparator.comparing(Task::getCreatedAt).reversed())
+                        .limit(5)
+                        .map(t -> mapper.map(t, TaskDto.class))
+                        .toList()
+        );
+
+        dto.setTodayTasks(
+                allTasks.stream()
+                        .filter(t -> today.equals(t.getScheduledDate()))
+                        .map(t -> mapper.map(t, TaskDto.class))
+                        .toList()
+        );
+
+        dto.setTotalOrders(allOrders.size());
+        dto.setPendingOrders((int) allOrders.stream().filter(o -> o.getStatus().equals(OrderStatus.PENDING)).count());
+        dto.setCompletedOrders((int) allOrders.stream().filter(o -> o.getStatus().equals(OrderStatus.COMPLETED)).count());
+
+        dto.setUpcomingTimeOff(Collections.emptyList()); // sau folosește date reale dacă ai
+
+        return dto;
+    }
+
+
 
     @Transactional
     public TaskDto updateTaskStatus(UUID taskId, String newStatus, UUID companyId) {

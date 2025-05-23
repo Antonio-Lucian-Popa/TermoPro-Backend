@@ -1,6 +1,7 @@
 package com.asusoftware.TermoPro.task.controller;
 
 import com.asusoftware.TermoPro.task.model.dto.CreateTaskDto;
+import com.asusoftware.TermoPro.task.model.dto.DashboardStatsDto;
 import com.asusoftware.TermoPro.task.model.dto.TaskDto;
 import com.asusoftware.TermoPro.task.service.TaskService;
 import jakarta.validation.Valid;
@@ -143,7 +144,10 @@ public class TaskController {
         return ResponseEntity.ok(taskService.getById(taskId, companyId));
     }
 
-
+    @GetMapping("/company/{companyId}/dashboard")
+    public ResponseEntity<DashboardStatsDto> getDashboardStats(@PathVariable UUID companyId) {
+        return ResponseEntity.ok(taskService.getDashboardStats(companyId));
+    }
 
     /**
      * Actualizează statusul unui task.
