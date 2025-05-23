@@ -12,7 +12,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-        registry.addEndpoint("/ws") // endpointul pe care se conectează front-end-ul
+        registry.addEndpoint("/api/v1/ws") // endpointul pe care se conectează front-end-ul
                 .setAllowedOriginPatterns("*")
                 .withSockJS(); // suport fallback pentru browsere fără WS
     }
