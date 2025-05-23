@@ -42,7 +42,6 @@ public class UserService {
         String keycloakId = keycloakService.createKeycloakUser(dto);
 
         User user = User.builder()
-                .id(UUID.randomUUID())
                 .firstName(dto.getFirstName())
                 .lastName(dto.getLastName())
                 .email(dto.getEmail())

@@ -33,7 +33,7 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/v1/users/**", "/api/v1/invitations/**", "/ws/**", "/images/**").permitAll()
+                        .requestMatchers("/api/v1/users/**", "/api/v1/companies/**", "/api/v1/invitations/**", "/ws/**", "/images/**").permitAll()
                         .requestMatchers("/api/v1/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )

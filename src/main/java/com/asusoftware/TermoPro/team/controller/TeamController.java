@@ -67,6 +67,17 @@ public class TeamController {
     }
 
     /**
+     * Returnează toate echipele dintr-o companie.
+     */
+    @GetMapping
+    public ResponseEntity<List<TeamDto>> getTeamsByCompany(
+            @RequestParam UUID companyId
+    ) {
+        return ResponseEntity.ok(teamService.getTeamsInCompany(companyId));
+    }
+
+
+    /**
      * Verifică dacă un user este membru al unei echipe.
      */
     @GetMapping("/{teamId}/members/{userId}/check")

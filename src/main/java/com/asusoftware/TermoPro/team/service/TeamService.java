@@ -90,6 +90,14 @@ public class TeamService {
                 .collect(Collectors.toList());
     }
 
+    public List<TeamDto> getTeamsInCompany(UUID companyId) {
+        List<Team> teams = teamRepository.findAllByCompanyId(companyId);
+        return teams.stream()
+                .map(team -> mapper.map(team, TeamDto.class))
+                .toList();
+    }
+
+
     public boolean isUserInTeam(UUID teamId, UUID userId) {
         return teamMembersRepository.existsByTeamIdAndUserId(teamId, userId);
     }

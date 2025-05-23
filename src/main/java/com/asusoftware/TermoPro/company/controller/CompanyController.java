@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/companies")
+@RequestMapping("/api/v1/companies")
 @RequiredArgsConstructor
 public class CompanyController {
 
@@ -22,7 +22,7 @@ public class CompanyController {
      * Creează o companie nouă.
      * Doar userii cu rol OWNER ar trebui să poată face asta (logică de frontend/autorizare).
      */
-    @PostMapping("/{userId}")
+    @PostMapping
     public ResponseEntity<CompanyDto> createCompany(
             @RequestBody CreateCompanyDto dto
     ) {
