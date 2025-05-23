@@ -60,6 +60,15 @@ public class UserController {
     }
 
     /**
+     * Returnează userul curent după id-ul din aplicație.
+     */
+    @GetMapping("/{id}")
+    public ResponseEntity<UserDto> getById(@PathVariable UUID id) {
+        UserDto user = userService.getById(id);
+        return ResponseEntity.ok(user);
+    }
+
+    /**
      * Șterge userul (hard delete).
      */
     @DeleteMapping("/by-keycloak/{keycloakId}")

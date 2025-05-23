@@ -124,18 +124,27 @@ public class TaskController {
                 .body(excel);
     }
 
+    /**
+     * Returnează detalii despre un task după ID.
+     */
+    @GetMapping("/{companyId}/{taskId}")
+    public ResponseEntity<TaskDto> getTaskDetails(@PathVariable(name = "taskId") UUID taskId, @PathVariable(name = "companyId") UUID companyId) {
+        return ResponseEntity.ok(taskService.getById(taskId, companyId));
+    }
+
+
 
     /**
      * Actualizează statusul unui task.
      */
     @PutMapping("/{taskId}/status")
-    public ResponseEntity<Void> updateStatus(
+    public ResponseEntity<TaskDto> updateStatus(
             @PathVariable UUID taskId,
             @RequestParam String status,
             @RequestParam UUID companyId
     ) {
-        taskService.updateTaskStatus(taskId, status, companyId);
-        return ResponseEntity.noContent().build();
+        TaskDto task = taskService.updateTaskStatus(taskId, status, companyId);
+        return ResponseEntity.ok(task);
     }
 
     @DeleteMapping("/{taskId}")

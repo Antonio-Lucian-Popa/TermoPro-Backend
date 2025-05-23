@@ -106,12 +106,13 @@ public class TaskService {
     }
 
     @Transactional
-    public void updateTaskStatus(UUID taskId, String newStatus, UUID companyId) {
+    public TaskDto updateTaskStatus(UUID taskId, String newStatus, UUID companyId) {
         Task task = taskRepository.findByIdAndCompanyId(taskId, companyId)
                 .orElseThrow(() -> new ResourceNotFoundException("Task-ul nu a fost găsit în companie."));
 
         task.setStatus(newStatus);
         taskRepository.save(task);
+        return mapper.map(task, TaskDto.class);
     }
 
     @Transactional

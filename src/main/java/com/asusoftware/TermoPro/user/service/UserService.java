@@ -103,6 +103,15 @@ public class UserService {
     }
 
     /**
+     * Returnează userul după id-ul din aplicație.
+     */
+    public UserDto getById(UUID id) {
+        return userRepository.findById(id)
+                .map(user -> mapper.map(user, UserDto.class))
+                .orElseThrow(() -> new UserNotFoundException("User cu id " + id + " nu a fost găsit"));
+    }
+
+    /**
      * Login utilizator prin Keycloak.
      */
     public AccessTokenResponse login(LoginDto dto) {
