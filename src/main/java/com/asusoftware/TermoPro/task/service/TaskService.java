@@ -22,6 +22,9 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -81,10 +84,19 @@ public class TaskService {
         return mapper.map(task, TaskDto.class);
     }
 
-    public List<TaskDto> getAllForCompany(UUID companyId) {
-        return taskRepository.findAllByCompanyId(companyId).stream()
-                .map(task -> mapper.map(task, TaskDto.class))
-                .collect(Collectors.toList());
+    public Page<TaskDto> getAllForCompany(UUID companyId, String status, String type, Pageable pageable) {
+        Specification<Task> spec = Specification.where(TaskSpecifications.hasCompanyId(companyId));
+
+        if (status != null && !status.equals("all")) {
+            spec = spec.and(TaskSpecifications.hasStatus(status));
+        }
+
+        if (type != null && !type.equals("all")) {
+            spec = spec.and(TaskSpecifications.hasType(type));
+        }
+
+        return taskRepository.findAll(spec, pageable)
+                .map(task -> mapper.map(task, TaskDto.class));
     }
 
     public List<TaskDto> getAllForTeam(UUID teamId) {

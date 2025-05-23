@@ -5,6 +5,10 @@ import com.asusoftware.TermoPro.task.model.dto.TaskDto;
 import com.asusoftware.TermoPro.task.service.TaskService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -37,8 +41,15 @@ public class TaskController {
      * Returnează toate taskurile dintr-o companie.
      */
     @GetMapping("/company/{companyId}")
-    public ResponseEntity<List<TaskDto>> getAllByCompany(@PathVariable UUID companyId) {
-        return ResponseEntity.ok(taskService.getAllForCompany(companyId));
+    public ResponseEntity<Page<TaskDto>> getAllByCompany(
+            @PathVariable UUID companyId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(required = false) String status,
+            @RequestParam(required = false) String type
+    ) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("scheduledDate").descending());
+        return ResponseEntity.ok(taskService.getAllForCompany(companyId, status, type, pageable));
     }
 
     /**
