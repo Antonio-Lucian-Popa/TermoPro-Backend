@@ -12,6 +12,10 @@ import com.asusoftware.TermoPro.task.model.dto.TaskDto;
 import com.asusoftware.TermoPro.task.repository.TaskRepository;
 import com.asusoftware.TermoPro.task.repository.TaskUpdatePhotoRepository;
 import com.asusoftware.TermoPro.task.repository.TaskUpdateRepository;
+import com.asusoftware.TermoPro.team.model.Team;
+import com.asusoftware.TermoPro.team.model.TeamMember;
+import com.asusoftware.TermoPro.team.repository.TeamMembersRepository;
+import com.asusoftware.TermoPro.team.repository.TeamRepository;
 import com.asusoftware.TermoPro.user.model.User;
 import com.asusoftware.TermoPro.user.model.UserRole;
 import com.asusoftware.TermoPro.user.repository.UserRepository;
@@ -51,6 +55,8 @@ public class TaskService {
     private final TaskUpdatePhotoRepository taskUpdatePhotoRepository;
     private final UserRepository userRepository;
     private final CustomerOrderRepository orderRepository;
+    private final TeamRepository teamRepository;
+    private final TeamMembersRepository teamMembersRepository;
     private final ModelMapper mapper;
 
     @Transactional
@@ -133,6 +139,15 @@ public class TaskService {
         dto.setTotalTasks(allTasks.size());
         dto.setPendingTasks((int) allTasks.stream().filter(t -> t.getStatus().equals("PENDING")).count());
         dto.setCompletedTasks((int) allTasks.stream().filter(t -> t.getStatus().equals("COMPLETED")).count());
+
+        List<Team> allTeams = teamRepository.findAllByCompanyId(companyId);
+        List<TeamMember> allMembers = teamMembersRepository.findAllByTeamIdIn(
+                allTeams.stream().map(Team::getId).toList()
+        );
+
+        dto.setTotalTeams(allTeams.size());
+        dto.setTotalTeamMembers(allMembers.size());
+
 
         dto.setRecentTasks(
                 allTasks.stream()

@@ -17,6 +17,9 @@ public interface TeamMembersRepository extends JpaRepository<TeamMember, TeamMem
     // Găsește toate echipele unui utilizator
     List<TeamMember> findAllByUserId(UUID userId);
 
+    List<TeamMember> findAllByTeamIdIn(List<UUID> teamIds);
+
+
     // Verifică dacă un utilizator este într-o echipă
     boolean existsByTeamIdAndUserId(UUID teamId, UUID userId);
 
@@ -27,5 +30,6 @@ public interface TeamMembersRepository extends JpaRepository<TeamMember, TeamMem
     void deleteByTeamId(UUID teamId);
 
     void deleteAllByTeamId(UUID teamId);
+
 
 }

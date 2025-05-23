@@ -16,4 +16,7 @@ public class DashboardStatsDto {
     private List<TaskDto> recentTasks;
     private List<TaskDto> todayTasks;
     private List<TimeOffDto> upcomingTimeOff;
+    private int totalTeams;
+    private int totalTeamMembers;
+
 }
