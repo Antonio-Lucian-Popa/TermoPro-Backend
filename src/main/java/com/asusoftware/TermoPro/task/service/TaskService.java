@@ -9,6 +9,7 @@ import com.asusoftware.TermoPro.task.repository.TaskRepository;
 import com.asusoftware.TermoPro.task.repository.TaskUpdatePhotoRepository;
 import com.asusoftware.TermoPro.task.repository.TaskUpdateRepository;
 import com.asusoftware.TermoPro.user.model.User;
+import com.asusoftware.TermoPro.user.model.UserRole;
 import com.asusoftware.TermoPro.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.apache.pdfbox.pdmodel.PDDocument;
@@ -52,7 +53,7 @@ public class TaskService {
         User userCreator = userRepository.findById(creatorUserId)
                 .orElseThrow(() -> new ResourceNotFoundException("Utilizatorul nu a fost găsit"));
 
-        if (!userCreator.getRole().equals("OWNER") && !userCreator.getRole().equals("ADMIN")) {
+        if (!userCreator.getRole().equals(UserRole.OWNER) && !userCreator.getRole().equals(UserRole.MANAGER)) {
             throw new IllegalArgumentException("Utilizatorul nu are permisiunea de a crea taskuri.");
         }
 
