@@ -15,7 +15,7 @@ import java.util.UUID;
 @Builder
 @Data
 @Entity
-@Table(name = "invitations")
+@Table(name = "invitation")
 public class Invitation {
 
     @Id
