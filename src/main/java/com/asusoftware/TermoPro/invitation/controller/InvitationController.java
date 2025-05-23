@@ -59,11 +59,11 @@ public class InvitationController {
     }
 
     /**
-     * Returnează invitațiile active pentru clinica specificată.
+     * Returnează invitațiile active pentru compania specificată.
      */
-    @GetMapping("/clinic/{clinicId}")
-    public ResponseEntity<List<InvitationDto>> getActiveInvitations(@PathVariable UUID clinicId) {
-        List<InvitationDto> invitations = invitationService.getActiveInvitations(clinicId);
+    @GetMapping("/company/{companyId}")
+    public ResponseEntity<List<InvitationDto>> getActiveInvitations(@PathVariable UUID companyId) {
+        List<InvitationDto> invitations = invitationService.getActiveInvitations(companyId);
         return ResponseEntity.ok(invitations);
     }
 
