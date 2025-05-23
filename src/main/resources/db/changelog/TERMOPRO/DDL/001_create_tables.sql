@@ -107,3 +107,20 @@ CREATE TABLE invitation (
     used BOOLEAN DEFAULT FALSE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+-- ============================
+-- TABELA: notifications
+-- ============================
+CREATE TABLE notifications (
+    id UUID PRIMARY KEY,
+    clinic_id UUID NOT NULL,
+    user_id UUID, -- poate fi null dacă e pentru toată clinica
+    title VARCHAR(255) NOT NULL,
+    message TEXT NOT NULL,
+    type VARCHAR(20) NOT NULL, -- ex: "info", "warning"
+    read BOOLEAN DEFAULT FALSE,
+    timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT fk_notification_clinic FOREIGN KEY (clinic_id) REFERENCES clinics(id) ON DELETE CASCADE,
+    CONSTRAINT fk_notification_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL
+);

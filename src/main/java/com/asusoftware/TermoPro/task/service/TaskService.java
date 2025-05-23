@@ -4,6 +4,8 @@ import com.asusoftware.TermoPro.customer_order.model.CustomerOrder;
 import com.asusoftware.TermoPro.customer_order.model.OrderStatus;
 import com.asusoftware.TermoPro.customer_order.repository.CustomerOrderRepository;
 import com.asusoftware.TermoPro.exception.ResourceNotFoundException;
+import com.asusoftware.TermoPro.notification.model.NotificationType;
+import com.asusoftware.TermoPro.notification.service.NotificationService;
 import com.asusoftware.TermoPro.task.model.Task;
 import com.asusoftware.TermoPro.task.model.TaskUpdate;
 import com.asusoftware.TermoPro.task.model.dto.CreateTaskDto;
@@ -57,6 +59,7 @@ public class TaskService {
     private final CustomerOrderRepository orderRepository;
     private final TeamRepository teamRepository;
     private final TeamMembersRepository teamMembersRepository;
+    private final NotificationService notificationService;
     private final ModelMapper mapper;
 
     @Transactional
@@ -88,6 +91,14 @@ public class TaskService {
                 .build();
 
         taskRepository.save(task);
+
+        if (task.getUserId() != null) {
+            notificationService.notifyUser(task.getUserId(), "Sarcină nouă asignată", task.getTitle(), NotificationType.INFO);
+        }
+
+        if (task.getTeamId() != null) {
+            notificationService.notifyTeam(task.getTeamId(), "Sarcină pentru echipă", task.getTitle(), NotificationType.INFO);
+        }
         return mapper.map(task, TaskDto.class);
     }
 
@@ -182,6 +193,11 @@ public class TaskService {
 
         task.setStatus(newStatus);
         taskRepository.save(task);
+
+        User owner = userRepository.findOwnerByCompanyId(companyId);
+        if (owner != null) {
+            notificationService.notifyUser(owner.getId(), "Status sarcină actualizat", task.getTitle() + " este acum: " + newStatus, NotificationType.INFO);
+        }
         return mapper.map(task, TaskDto.class);
     }
 

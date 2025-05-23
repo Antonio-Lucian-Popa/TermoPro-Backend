@@ -4,6 +4,7 @@ import com.asusoftware.TermoPro.user.model.User;
 import com.asusoftware.TermoPro.user.model.UserRole;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -27,6 +28,9 @@ public interface UserRepository extends JpaRepository<User, UUID> {
     List<User> findAllByCompanyId(UUID companyId);
 
     List<User> findAllByCompanyIdAndRole(UUID companyId, UserRole role);
+
+    @Query("SELECT u FROM User u WHERE u.companyId = :companyId AND u.role = 'OWNER'")
+    User findOwnerByCompanyId(@Param("companyId") UUID companyId);
 
     boolean existsByIdAndCompanyIdAndRole(UUID id, UUID companyId, UserRole role);
 

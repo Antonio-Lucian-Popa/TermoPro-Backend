@@ -28,4 +28,6 @@ public interface UserTimeOffRepository extends JpaRepository<UserTimeOff, UUID> 
 """)
     List<UserTimeOff> findAllPendingByCompany(@Param("companyId") UUID companyId);
 
+    List<UserTimeOff> findAllByStartDateBetween(LocalDate start, LocalDate end);
+
 }
