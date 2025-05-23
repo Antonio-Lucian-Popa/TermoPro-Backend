@@ -55,7 +55,7 @@ public class InvitationService {
 
         // Trebuie sa trimitem email la user cu token(adica invitatia)
         // 2. Trimiți mail
-        String link = "http://localhost:5173/dentatrack-fe" + "/login?token=" + invitation.getToken();
+        String link = "http://localhost:5173" + "/register/invite?token=" + invitation.getToken();
         mailService.sendInvitationEmail(dto.getEmployeeEmail(), link, companyDto.getName(), dto.getRole().toString());
 
         return mapper.map(invitation, InvitationDto.class);

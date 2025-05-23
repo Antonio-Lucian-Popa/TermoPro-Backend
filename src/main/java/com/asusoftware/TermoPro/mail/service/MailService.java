@@ -46,7 +46,7 @@ public class MailService {
           <div style="max-width: 600px; margin: auto; background-color: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.05);">
             <h2 style="color: #2e7d32;">You're Invited to Join %s!</h2>
             <p>Hello,</p>
-            <p><strong>%s</strong> has invited you to join the clinic <strong>%s</strong> as a <strong>%s</strong> on DentaTrack.</p>
+            <p><strong>%s</strong> has invited you to join to the company <strong>%s</strong> as a <strong>%s</strong> on TermoPro.</p>
             <p>To accept the invitation and create your account, click the button below:</p>
             <div style="text-align: center; margin: 20px 0;">
               <a href="%s" style="background-color: #2e7d32; color: white; padding: 12px 24px; border-radius: 6px; text-decoration: none; font-weight: bold;">
